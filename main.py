@@ -1,9 +1,9 @@
 import os
 import shutil
 
-print("enter source item's full adress:")
+print("enter absolute file's path:")
 srcFold = input()
-print("enter destination folder's adress:")
+print("enter destination folder's path:")
 dstFold = input()
 
 shutil.move(srcFold, dstFold)
