@@ -1,18 +1,35 @@
+import os
 import shutil
 from os import listdir
 from os.path import isfile, join
 import re
 
 
-def moveFiles(sourcFolder, destinationFolder, keywords):
-    sourcFolderPath = sourcFolder + "/"
-    filesNames = [f for f in listdir(sourcFolderPath) if
-                  isfile(join(sourcFolderPath, f))]  # take all the file's names into array
+def moveFiles(sourceFolder, destinationFolder, keywords):
+    sourceFolderPath = sourceFolder  # + "/"
+    #destinationFolder = destinationFolder + "/"
+    filesNames = getFilesNames(sourceFolderPath)
     stopCond = len(filesNames)
     if stopCond > 0:  # there are files in the folder
         for x in filesNames:
-            splittedName = re.split(',| . |_|-|!|\+', x)
-            if len(splittedName) >= 1:
+            splitName = re.split(r"[\b\W\b]+", x)   #TODO: divide by undercore as well
+            if len(splitName) >= 1:
                 for key in keywords:
-                    if splittedName[0] == key:   #TODO: change splittedName[0] to loop the words
-                        shutil.move(sourcFolder.format(x), destinationFolder)
+                    for word in splitName:
+                        if word == key:
+                            try:
+                                if os.path.exists(destinationFolder + format(x)):
+                                    print("file already exists at destination folder")
+                                else:
+                                    #shutil.move(sourceFolder.format(x), destinationFolder)
+                                    os.replace(sourceFolder.format(x), destinationFolder.format(x))
+                                    print(format(x) + "has been moved to " + destinationFolder)
+                            except FileNotFoundError:
+                                print(format(x) + " was not found at source folder")
+                            break
+
+
+# take all the file's names into array
+def getFilesNames(srcPath):
+    filesNames = [f for f in listdir(srcPath) if isfile(join(srcPath, f))]
+    return filesNames
